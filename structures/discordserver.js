@@ -1,51 +1,26 @@
-const { Guild, Message, GuildMember, TextChannel, Collection } = require("discord.js");
 const KaraokeBot = require('./karaokebot');
+const rethink = require('../database/rethinkwrapper');
 
-module.exports = class Server extends Guild{
-
+module.exports = class Server{
     /**
-     * @param {Guild} guild 
-     * @param {string} prefix 
-     * @param {TextChannel} karaokechannel 
+     * 
+     * @param {KaraokeBot} client 
+     * @param {String} id 
      */
-    constructor(client, guildoptions = {}, guild, prefix, karaokechannel){
-        super(client, guildoptions)
-        this.guild = guild;
-        this.prefix = prefix || 'k+';
-        this.karaokechannel = karaokechannel || null;
+    constructor(client, id){
+        this.client = client;
+        this.id = id;
     }
     
-    /**
-     * @param {Message} message 
-     * @returns {Server}
-     */
-    static serverfrommessage(message){
-        return new Server(message.client, {}, message.guild);
+    get prefix(){
+        return this.client.guildata.get(this.id, 'prefix');
     }
 
-    /**
-     * @param {GuildMember} member 
-     * @returns {Server}
-     */
-    static serverfrommember(member){
-        return new Server(member.client, {}, member.guild);
+    get karaokeChannel(){
+        return this.client.guildata.get(this.id, 'karaokeChannelID') || null;
     }
-
-    /**
-     * @param {KaraokeBot} client 
-     * @returns {Collection<string,Server>}
-     */
-    static serversfromclient(client){
-        const ret = new Collection();
-        client.guilds.cache.forEach(guild => ret.set(guild.id, new Server(client, {}, guild)));
-        return ret;
+    
+    get roleReward(){
+        return this.client.guildata.get(this.id, 'roleRewardID') || null;
     }
-
-    /**
-     * @returns {String}
-     */
-    get getPrefix(){
-        return this.prefix;
-    }
-
 }

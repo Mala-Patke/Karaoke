@@ -1,11 +1,36 @@
+class commandoptions{
+    /**
+     * @param {string} category 
+     * @param {string} description 
+     * @param {string[]} aliases 
+     * @param {boolean} guildOnly 
+     * @param {string} usage 
+     */
+    constructor(
+        category = null,
+        description = null,
+        aliases = [],
+        guildOnly = false, 
+        usage = this.description
+    ){
+        this.category = category;
+        this.description = description;
+        this.aliases = aliases;
+        this.guildOnly = guildOnly;
+        this.usage = usage;
+    }
+}
+
 module.exports = class Command{
-    constructor(name, options = {}){
+    /**
+     * @param {string} name 
+     * @param {import('../structures/karaokebot')} client
+     * @param {commandoptions} options 
+     */
+    constructor(name, client, options){
         this.name = name;
-        this.category = options.category;
-        this.description = options.description || null;
-        this.aliases = options.aliases || null;
-        this.guildOnly = options.guildOnly || false;
-        this.usage = options.usage || null;        
+        this.client = client;
+        this.options = options;
     }
     
     execute(message, args){
