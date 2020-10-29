@@ -29,8 +29,8 @@ client.on('guildCreate', guild => {
 client.on('message', message => {
     let prefix = client.servers.find(a => a.id === message.guild.id).prefix;
     if(!message.content.startsWith(prefix.toLowerCase())) return;
-    let command = message.content.split(" ")[0].slice(prefix.length);
-    let args = message.content.split(" ").slice(prefix.length + command.length);
+    let command = message.content.split(/ +/)[0].slice(prefix.length);
+    let args = message.content.split(/ +/).slice(prefix.split(/ +/).length);
     try{
         client.getCommand(command).execute(message, args);
     } catch (e) {
