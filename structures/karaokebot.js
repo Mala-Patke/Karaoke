@@ -5,7 +5,7 @@ const Command = require('./command');
 const Server = require('./discordserver');
 
 const rethink = require('../database/rethinkwrapper');
-const sql = require('../database/dbwrapper');
+const SQLWrapper = require('../database/dbwrapper');
 
 require('dotenv').config();
 
@@ -20,21 +20,32 @@ module.exports = class KaraokeBot extends Client{
         this.categories = categories;
     }
 
-    connection;
-    guildata = sql;
+    //Values that might come in handy later
+    /**@private*/
+    _connection;
+    /**@private*/
+    _declaredServers = [];
+    guildata = SQLWrapper;
 
-    get guildata(){
-        return this.guildata;
+    /**
+     * @returns {import('rethinkdb').Connection}
+     */
+    get connection(){
+        return this._connection
+    }
+    /**
+     * @returns {import('./discordserver')[]}
+     */
+    get declaredServers(){
+        return this._declaredServers;
     }
 
     async rethinkConnect(){
         exec('rethinkdb.exe', {
             cwd:'./database/RethinkDB'
         });
-        rethink.connect().then(res => {
-            this.connection = res;
-            console.log('RethinkDB connected to bot');
-        }).catch(err => console.error(err));
+        this._connection = await rethink.connect()
+            .catch(err => console.error(err));
     }
 
     /**
@@ -46,30 +57,38 @@ module.exports = class KaraokeBot extends Client{
     }
 
     /**
-     * @returns {Server[]}
+     * @param {String} id 
+     * @returns {Server}
      */
-    get servers(){
-        let ret = [];
+    getServerByID(id){
+        return this.declaredServers.find(a => a.id === id);
+    }
+
+    registerServers(){
         this.guilds.cache.each(guild => {
-            ret.push(new Server(this, guild.id));
+            this._declaredServers.push(new Server(this, guild.id));
         })
-        return ret;
     }
 
-    registerGuild(id){
-        this.guildata.insert(id)
+    async registerGuild(id){
+        this.guildata.insert(id);
+        await rethink.registerNewGuild(this.connection, id)
+        this.declaredServers.push(new Server(this, id));
     }
 
-    //For use instead of ready event.
+    //Stuff that should be done before ready event.
     async start(){
         await this.login(process.env.TOKEN)
-        console.log('Bot logged in');
-
+        console.log('Bot logged in')
         await this.rethinkConnect();
+        console.log('RethinkDB connection active')
         this.guildata.createBase();
-        for(let i of this.servers){
-            this.registerGuild(i.id);
-        }
+    }
+
+    //Stuff that should be done on ready
+    async ready(){
+        this.registerServers();
+        console.log('All Guilds locally registered.')
     }
 
 }

@@ -7,7 +7,7 @@ const headers = {
 
 module.exports = async (url) => {
     return new Promise((res, rej) => {
-        axios.get(url, { headers })
+        axios.get(url, { headers: headers })
             .then(a => {
                 res(a.data.response)
             }).catch(err => {

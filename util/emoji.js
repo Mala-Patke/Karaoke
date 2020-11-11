@@ -1,4 +1,5 @@
-//I totally ripped this off of the discord.js guide because I was too lazy to get all of the emojis manually
+//Ripped this off of the discord.js guide because I was too lazy to get all of the emojis manually
+//Credits to pigsnsheep#4451 for help in setting this up
 module.exports = {
 	a: '🇦', b: '🇧', c: '🇨', d: '🇩',
 	e: '🇪', f: '🇫', g: '🇬', h: '🇭',
@@ -13,7 +14,7 @@ module.exports = {
     '!': '❗', '?': '❓',
 
     'black': '⬛', 'yellow':'🟨', 'red':'🟥', 'blue':'🟦',
-    //Credits to pigsnsheep#4451 for setting this up
+
     "0️⃣":"0","1️⃣":"1","2️⃣":"2","3️⃣":"3",
     "4️⃣":"4","5️⃣":"5","6️⃣":"6","7️⃣":"7",
     "8️⃣":"8","9️⃣":"9","🔟":"10",
