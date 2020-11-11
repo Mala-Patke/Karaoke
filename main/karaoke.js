@@ -17,7 +17,6 @@ function karaoke(client, message){
         - Bannedwords
         - funny/optional characters
     */
-    if(message.split(/ +/).find(elem => server.bannedwords.includes(elem))) return message.delete();
 }
 
 module.exports = karaoke;
