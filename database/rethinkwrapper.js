@@ -40,8 +40,8 @@ class RethinkWrapper{
      * @param {String} guildId 
      */
     static async registerNewGuild(connection, guildId){
-        return new Promsise((res, rej) => {
-            rethink.db(process.env.RETHINKMAINDB).tableCreate(guildId, {primary_key:id}).run(connection)
+        return new Promise((res, rej) => {
+            rethink.db(process.env.RETHINKMAINDB).tableCreate(guildId, {primary_key:'id'}).run(connection)
                 .then(created => res(created))
                 .catch(reason => rej(reason));
         })
@@ -73,10 +73,19 @@ class RethinkWrapper{
         let startdata = await rethink.table(guildId).get(memberId).run(connection);
         if(!await this.doesMemberExistInTable(memberId, guildId)) await this.registerNewGuildMember(memberId, guildId);
         startdata.count+=1;
-        return db.table(guildId).get(memberId).update(startdata);
+        return rethink.table(guildId).get(memberId).update(startdata);
     }
 
-    
+    /**
+     * @param {import("rethinkdb").Connection} connection 
+     * @param {String} memberId 
+     * @param {String} guildId 
+     */
+    static async getMemberCount(connection, memberId, guildId){
+        if(!await this.doesMemberExistInTable(memberId, guildId)) return 0;
+        return await rethink.table(guildId).get(memberId).run(connection);
+    }
+
 }
 
 module.exports = RethinkWrapper;

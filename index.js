@@ -22,12 +22,15 @@ for(let cat of categories){
 client.commands = commands;
 client.categories = categories;
 
+client.on('ready', client.ready);
+
 client.on('guildCreate', guild => {
     client.registerGuild(guild.id);
 })
 
 client.on('message', message => {
-    let prefix = client.servers.find(a => a.id === message.guild.id).prefix;
+    let prefix = client.getServerByID(message.guild.id).prefix;
+    console.log(prefix);
     if(!message.content.startsWith(prefix.toLowerCase())) return;
     let command = message.content.split(/ +/)[0].slice(prefix.length);
     let args = message.content.split(/ +/).slice(prefix.split(/ +/).length);
@@ -38,4 +41,4 @@ client.on('message', message => {
     }
 })
 
-client.start().then(() => console.log('Initialization has completed. Client is now ready for use.'));
+client.start().then(() => console.log('Initialization has completed.'));

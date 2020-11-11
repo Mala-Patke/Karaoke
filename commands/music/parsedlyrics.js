@@ -1,10 +1,11 @@
 const { MessageEmbed } = require('discord.js');
 const Command = require("../../structures/command");
 const genius = require("../../geniusapiwrapper/genius");
+const parseLyrics = require('../../main/parseLyrics');
 
-module.exports = class LyricsCommand extends Command{
+module.exports = class ParsedLyricsCommand extends Command{
     constructor(client){
-        super('lyrics', client, {
+        super('parsedlyrics', client, {
             category:__dirname
         })
     }
@@ -32,7 +33,7 @@ module.exports = class LyricsCommand extends Command{
         let actualsonglyrics = await genius.lyrics(searchresults.hits[selection].result.url).catch(err => { throw new Error(err)});
 
         await temp.delete();
-        message.channel.send(`\`\`\`${actualsonglyrics}\`\`\``, {split:{append:'```', prepend:'```'}});
+        message.channel.send(`\`\`\`${parseLyrics(actualsonglyrics, this.client.getServerByID(message.guild.id).bannedwords)}\`\`\``, {split:{append:'```', prepend:'```'}});
     }
 
 }
