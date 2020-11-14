@@ -21,7 +21,7 @@ module.exports = class Server{
     _get(thing){
         if(!this.cache.get(thing)){
             let dbresponse = this.client.guildata.get(this.id, thing);
-            this.cache.tset(thing, dbresponse, 3600000);
+            this.cache.tset(thing, dbresponse, 600000);
             return dbresponse;
         } 
         return this.cache.get(thing).val;
@@ -40,6 +40,14 @@ module.exports = class Server{
      */
     getMemberCount(userid){
         return rethink.getMemberCount(this.client.connection, userid, this.id);
+    }
+
+    /**
+     * @param {('prefix'|'karaokeChannelID'|'roleRewardID'|'lastSingerID'|'currentSong'|'currentSongName'|'currentLine'|'bannedWords'|'songStartTime')} key 
+     * @param {string} val 
+     */
+    set(key, val){
+        return this.client.guildata.set(this.id, key, val);
     }
 
     /**
@@ -71,6 +79,13 @@ module.exports = class Server{
     }
 
     /**
+     * @returns {string}
+     */
+    get songName(){
+        return this._get('currentSongName');
+    }
+
+    /**
      * @returns {number}
      */
     get line(){
@@ -82,6 +97,10 @@ module.exports = class Server{
      */
     get lastSinger(){
         return this._get('lastSingerID');
+    }
+
+    get startTime(){
+        return this._get('songStartTime');
     }
 
     /**

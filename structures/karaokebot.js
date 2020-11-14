@@ -25,7 +25,9 @@ module.exports = class KaraokeBot extends Client{
     _connection;
     /**@private*/
     _declaredServers = [];
+
     guildata = SQLWrapper;
+    rethink = rethink;
 
     /**
      * @returns {import('rethinkdb').Connection}
@@ -72,7 +74,7 @@ module.exports = class KaraokeBot extends Client{
 
     async registerGuild(id){
         this.guildata.insert(id);
-        await rethink.registerNewGuild(this.connection, id)
+        //await this.rethink.registerNewGuild(this.connection, id)
         this.declaredServers.push(new Server(this, id));
     }
 
@@ -83,6 +85,7 @@ module.exports = class KaraokeBot extends Client{
         await this.rethinkConnect();
         console.log('RethinkDB connection active')
         this.guildata.createBase();
+        this.registerGuild('690801248143671296');
     }
 
     //Stuff that should be done on ready

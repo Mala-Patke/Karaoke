@@ -71,7 +71,7 @@ class RethinkWrapper{
      */
     static async incrementMemberCount(connection, memberId, guildId){
         let startdata = await rethink.table(guildId).get(memberId).run(connection);
-        if(!await this.doesMemberExistInTable(memberId, guildId)) await this.registerNewGuildMember(memberId, guildId);
+        if(!await this.doesMemberExistInTable(connection, memberId, guildId)) startdata = await this.registerNewGuildMember(connection, memberId, guildId);
         startdata.count+=1;
         return rethink.table(guildId).get(memberId).update(startdata);
     }
@@ -82,7 +82,7 @@ class RethinkWrapper{
      * @param {String} guildId 
      */
     static async getMemberCount(connection, memberId, guildId){
-        if(!await this.doesMemberExistInTable(memberId, guildId)) return 0;
+        if(!await this.doesMemberExistInTable(connection, memberId, guildId)) return 0;
         return await rethink.table(guildId).get(memberId).run(connection);
     }
 

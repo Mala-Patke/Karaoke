@@ -1,6 +1,4 @@
 const Command = require('../../structures/command');
-const Embeds = require('../../embedwrappers/setupembeds');
-const { Message } = require('discord.js');
 
 module.exports = class SetupCommand extends Command{
     /**
@@ -17,19 +15,19 @@ module.exports = class SetupCommand extends Command{
     }
 
     /**
-     * @param {Message} message 
+     * @param {import('discord.js').Message} message 
      */
     execute(message){
         const filter = m => m.author === message.author;
         const collector = message.channel.createMessageCollector(filter, {time:300000});
         let increment = 1;
-        message.channel.send(Embeds.first())
+        message.channel.send(this.setupembeds.first());
         collector.on('collect', () => {
             if(message.channel.lastMessage.content.toLocaleLowerCase() === 'cancel') return collector.stop('Cancelled');
             increment++;
             const options = {
-                2: () => message.channel.send(Embeds.second()),
-                3: () => message.channel.send(Embeds.third()),
+                2: () => message.channel.send(this.setupembeds.second()),
+                3: () => message.channel.send(this.setupembeds.third()),
                 4: () => collector.stop('completed')
             }
             options[increment]();
@@ -39,13 +37,15 @@ module.exports = class SetupCommand extends Command{
             if(reason !== 'completed') return message.channel.send("Prompt cancelled");
             let messages = collected.array();
 
-            this.client.guildata.set(message.guild.id, 'karaokeChannelID', messages[1].mentions.channels.first().id);
-            this.client.guildata.set(message.guild.id, 'roleRewardID', messages[2].mentions.roles.first().id);
+            const server = this.client.getServerByID(message.guild.id);
 
-            let checkpoint1 = this.client.guildata.get(message.guild.id, 'karaokeChannelID');
-            let checkpoint2 = this.client.guildata.get(message.guild.id, 'roleRewardID');
+            server.set('karaokeChannelID', messages[1].mentions.channels.first().id);
+            server.set('roleRewardID', messages[2].mentions.roles.first().id);
 
-            message.channel.send(Embeds.final(checkpoint1, checkpoint2));
+            let checkpoint1 = server.karaokeChannel;
+            let checkpoint2 = server.roleReward;
+
+            message.channel.send(this.setupembeds.final(checkpoint1, checkpoint2));
 
         })
     }
