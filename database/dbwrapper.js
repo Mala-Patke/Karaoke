@@ -9,7 +9,9 @@ class SQLWrapper{
             karaokeChannelID TEXT,
             roleRewardID TEXT,
             lastSingerID TEXT,
+            currentSongName TEXT,
             currentSong TEXT,
+            songStartTime BIGINT,
             currentLine INT,
             bannedWords TEXT
             )`).run();
@@ -36,12 +38,21 @@ class SQLWrapper{
     /**
      * @param {string} id 
      * @param {string} key
-     * @param {string} value 
+     * @param {any} value 
      */
     static set(id, key, value){
-        db.prepare(`UPDATE guilds
-        SET ${key} = '${value}' 
-        WHERE id = '${id}'`).run();
+        let sql;
+        if(typeof(value) !== 'string'){
+            sql = `UPDATE guilds
+            SET ${key} = ${value}
+            WHERE id = '${id}'`
+        } else {
+            sql = `UPDATE guilds
+            SET ${key} = '${value}'
+            WHERE id = '${id}'`
+        }
+
+        db.prepare(sql).run();
     }
 
     /**

@@ -1,13 +1,14 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const Karaokebot = require('./structures/karaokebot');
+const karaoke = require('./main/karaoke');
 
 const client = new Karaokebot();
 
 let categories = [];
 let commands = new Discord.Collection();
 
-for(let dir of fs.readdirSync('./commands')){
+for(let dir of fs.readdirSync('./commands').filter(a => !a.endsWith('.txt'))){
     categories.push(dir);
 }
 
@@ -29,8 +30,13 @@ client.on('guildCreate', guild => {
 })
 
 client.on('message', message => {
-    let prefix = client.getServerByID(message.guild.id).prefix;
-    console.log(prefix);
+    if(message.author.bot) return;
+    if(message.channel.type !== 'text') return;
+    const server = client.getServerByID(message.guild.id);
+
+    if(message.channel.id === server.karaokeChannel) karaoke(client, message);
+
+    let prefix = server.prefix;
     if(!message.content.startsWith(prefix.toLowerCase())) return;
     let command = message.content.split(/ +/)[0].slice(prefix.length);
     let args = message.content.split(/ +/).slice(prefix.split(/ +/).length);
