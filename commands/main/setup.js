@@ -11,6 +11,7 @@ module.exports = class SetupCommand extends Command{
             aliases: ["config"],
             description: "Configure the server to use the karaoke feature",
             guildOnly: true,
+            requiredPermissions: 'MANAGE_GUILD'
         })
     }
 
@@ -35,12 +36,12 @@ module.exports = class SetupCommand extends Command{
 
         collector.on('end', (collected, reason) => {
             if(reason !== 'completed') return message.channel.send("Prompt cancelled");
-            let messages = collected.array();
+            let messages = collected.array().slice(1);
 
             const server = this.client.getServerByID(message.guild.id);
 
-            server.set('karaokeChannelID', messages[1].mentions.channels.first().id);
-            server.set('roleRewardID', messages[2].mentions.roles.first().id);
+            server.set('karaokeChannelID', messages[0].mentions.channels.first().id);
+            server.set('roleRewardID', messages[1].mentions.roles.first().id);
 
             let checkpoint1 = server.karaokeChannel;
             let checkpoint2 = server.roleReward;

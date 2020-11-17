@@ -3,7 +3,8 @@ const Command = require("../../structures/command");
 module.exports = class PingCommand extends Command{
     constructor(client){
         super('ping', client, {
-            category:__dirname
+            category:__dirname,
+            aliases: ['pong']
         })
     }
 

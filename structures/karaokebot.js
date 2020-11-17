@@ -21,6 +21,9 @@ module.exports = class KaraokeBot extends Client{
     }
 
     //Values that might come in handy later
+    /**
+     * @type {Collection<string, Command>}
+     */
     commands = new Collection();
     categories = [];
     /**@private*/
@@ -57,7 +60,7 @@ module.exports = class KaraokeBot extends Client{
      * @returns {Command} 
      */
     getCommand(arg){
-        return this.commands.get(arg) || this.commands.find(cmd => cmd.aliases && cmd.aliases.includes(arg));
+        return this.commands.get(arg) || this.commands.find(cmd => cmd.options.aliases && cmd.options.aliases.includes(arg)) || null;
     }
 
     /**

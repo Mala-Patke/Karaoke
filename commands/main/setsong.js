@@ -10,7 +10,8 @@ class SetSongCommand extends Command{
                 description: 'Sets the song for the server',
                 aliases: [],
                 guildOnly: true, 
-                usage: `setsong <song name>`
+                usage: `setsong <song name>`,
+                requiredPermissions: 'MANAGE_GUILD'
         })
     }
 
@@ -48,6 +49,9 @@ class SetSongCommand extends Command{
         server.set('currentSongName', searchresults.hits[selection].result.full_title)
         server.set('songStartTime', Date.now());
         server.set('currentLine', 0);
+
+        if(message.guild.members.cache.get(this.client.user.id).hasPermission('MANAGE_CHANNELS'))
+            message.guild.channels.cache.get(server.karaokeChannel).setTopic(`Current Song: ${server.songName}`)
 
         return message.channel.send(`Success! Set song to \`${searchresults.hits[selection].result.full_title}\`. Start singing in <#${server.karaokeChannel}>!`)
     }

@@ -8,19 +8,23 @@ class commandoptions{
      * @param {string[]} aliases 
      * @param {boolean} guildOnly 
      * @param {string} usage 
+     * @param {import('discord.js').PermissionString} requiredPermissions
      */
     constructor(
         category = null,
         description = null,
         aliases = [],
         guildOnly = false, 
-        usage = this.description
+        usage = this.description,
+        requiredPermissions = null
     ){
         this.category = category;
         this.description = description;
         this.aliases = aliases;
         this.guildOnly = guildOnly;
         this.usage = usage;
+        this.requiredPermissions = requiredPermissions;
+        
     }
 }
 
