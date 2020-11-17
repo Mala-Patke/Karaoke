@@ -82,13 +82,13 @@ module.exports = class Command{
             for(let i = 1; i < length+1; i++){
                 message.react(emoji[i]);
             }
-            message.react('stop_button');
+            message.react('⏹');
             let filter = (r, m) => m.id === user.id;
             let collector = message.createReactionCollector(filter, { time: 30000 })
                 .on('collect', (reaction, user) => {
                     collector.stop(1);
                     let validemote = emoji[reaction.emoji.name];
-                    if(reaction.emoji.name === 'stop_button') rej('Cancelled by User');
+                    if(reaction.emoji.name === '⏹') rej('Cancelled by User');
                     try{
                         if(validemote > length+1) rej('Faulty emote selection')
                         res(validemote-1)

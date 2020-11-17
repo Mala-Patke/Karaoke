@@ -14,7 +14,7 @@ class MiniCache extends Collection{
     tset(key, val, time){
         //Remove listener if key exists
         if(this.get(key)){
-            this_ee.removeListener(key, (key) => {
+            this._ee.removeListener(key, (key) => {
                 this.delete(key);
             });
         //Set Value

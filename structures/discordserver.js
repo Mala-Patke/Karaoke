@@ -38,8 +38,16 @@ module.exports = class Server{
      * @param {string} userid 
      * @returns {number}
      */
-    getMemberCount(userid){
-        return rethink.getMemberCount(this.client.connection, userid, this.id);
+    async getMemberCount(userid){
+        return await rethink.getMemberCount(this.client.connection, userid, this.id);
+    }
+
+    /**
+     * @param {string} userid 
+     * @returns {number[]}
+     */
+    async getTotalMemberCount(userid){
+        return await rethink.getMemberGuildCounts(this.client.connection, userid);
     }
 
     /**
@@ -47,7 +55,8 @@ module.exports = class Server{
      * @param {string} val 
      */
     set(key, val){
-        return this.client.guildata.set(this.id, key, val);
+        this.client.guildata.set(this.id, key, val);
+        this.cache.tset(key, val, 600000);
     }
 
     /**
@@ -110,7 +119,7 @@ module.exports = class Server{
         try{
             return this._get('bannedWords').split(",");
         } catch {
-            return [];;
+            return [];
         }
     }
 }

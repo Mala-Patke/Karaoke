@@ -59,7 +59,7 @@ class RethinkWrapper{
                 id:memberId,
                 count:0
             }).run(connection)
-                .then(val => res(val))
+                .then(async () => res(await rethink.table(guildId).get(memberId).run(connection)))
                 .catch(err => rej(err));
         })
     }
@@ -73,7 +73,7 @@ class RethinkWrapper{
         let startdata = await rethink.table(guildId).get(memberId).run(connection);
         if(!await this.doesMemberExistInTable(connection, memberId, guildId)) startdata = await this.registerNewGuildMember(connection, memberId, guildId);
         startdata.count+=1;
-        return rethink.table(guildId).get(memberId).update(startdata);
+        return rethink.table(guildId).get(memberId).update(startdata).run(connection);
     }
 
     /**
@@ -86,6 +86,28 @@ class RethinkWrapper{
         return await rethink.table(guildId).get(memberId).run(connection);
     }
 
+    /**
+     * @param {import('rethinkdb').Connection} connection 
+     * @param {string} memberId 
+     * @returns {Promise<number[]>}
+     */
+    static async getMemberGuildCounts(connection, memberId){
+        return new Promise(res => {
+            rethink.db(process.env.RETHINKMAINDB).tableList().run(connection)
+            .then(tables => {
+                let result = [];
+                tables.forEach(async tbl => {
+                    rethink.table(tbl).get(memberId).run(connection)
+                    .then(a => {
+                        result.push(a.count);
+                        if(result.length === tables.length){
+                            res(result);
+                        }
+                    });
+                });
+            });
+        });
+    }
 }
 
 module.exports = RethinkWrapper;

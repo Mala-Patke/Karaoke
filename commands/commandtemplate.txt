@@ -5,20 +5,20 @@ class  extends Command{
         super(, client, {
                 category: __dirname,                
                 description: '',
-                aliases = [],
-                guildOnly = true, 
-                usage = ''
+                aliases: [],
+                guildOnly: true, 
+                usage: ''
             
         })
     }
 
     /**
-     * @param {import('discord.js').Message} message 
-     * @param {string[]} args 
-     */
-     async execute(message, args){
+    * @param {import('discord.js').Message} message 
+    * @param {string[]} args 
+    */
+    async execute(message, args){
 
-     }
+    }
 }
 
 module.exports = ;

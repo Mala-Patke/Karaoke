@@ -15,6 +15,14 @@ function karaoke(client, message){
         return message.delete()
             .then(() => {
                 message.author.send('No song is set! Contact a server admin if you\'d like one to be set');
+            });
+    }
+
+    //Check if user has rolereward
+    if(server.lastSinger && message.author.id === server.lastSinger){
+        return message.delete()
+            .then(() => {
+                message.author.send('Hey, you just sang! Give someone else a turn.');
             })
     }
 
