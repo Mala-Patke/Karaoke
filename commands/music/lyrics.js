@@ -5,7 +5,10 @@ const genius = require("../../geniusapiwrapper/genius");
 module.exports = class LyricsCommand extends Command{
     constructor(client){
         super('lyrics', client, {
-            category:__dirname
+            category:__dirname,
+            description: 'Get\'s the parsed lyrics of the song, as they\'re interpretted by the karaoke feature.',
+            aliases: [],
+            usage: 'lyrics [song name]'
         })
     }
 

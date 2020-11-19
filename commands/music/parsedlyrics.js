@@ -6,7 +6,10 @@ const parseLyrics = require('../../main/parseLyrics');
 module.exports = class ParsedLyricsCommand extends Command{
     constructor(client){
         super('parsedlyrics', client, {
-            category:__dirname
+            category:__dirname,
+            description: 'Get\'s the parsed lyrics of the song, as they\'re interpretted by the karaoke feature.',
+            aliases: [],
+            usage: 'parsedlyrics [song name]' 
         })
     }
 

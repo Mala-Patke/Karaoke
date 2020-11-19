@@ -5,10 +5,10 @@ class ScoreCommand extends Command{
     constructor(client){
         super('score', client, {
                 category: __dirname,                
-                description: '',
-                aliases: [],
+                description: 'View a user\'s server score',
+                aliases: ['points'],
                 guildOnly: true, 
-                usage: ''
+                usage: 'score <user>'
             
         })
     }

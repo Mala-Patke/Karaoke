@@ -21,10 +21,9 @@ module.exports = class KaraokeBot extends Client{
     }
 
     //Values that might come in handy later
-    /**
-     * @type {Collection<string, Command>}
-     */
+    /**@type {Collection<string, Command>}*/
     commands = new Collection();
+    /**@type {string[]}*/
     categories = [];
     /**@private*/
     _connection;
@@ -88,6 +87,7 @@ module.exports = class KaraokeBot extends Client{
             let categorycommand = readdirSync(join(__dirname, `../commands/${cat}`));
             for(const filename of categorycommand){
                 const command = new (require(join(__dirname,`../commands/${cat}/${filename}`)))(this);
+                command.options.category = command.options.category.split(/\\+/)[command.options.category.split(/\\+/).length-1]
                 this.commands.set(command.name, command);
             }
         }
@@ -121,7 +121,7 @@ module.exports = class KaraokeBot extends Client{
     //Stuff that should be done on ready
     async ready(){
         this.registerServers();
-        console.log('All Guilds locally registered.')
+        console.log('All Guilds locally registered.');
     }
 
 }

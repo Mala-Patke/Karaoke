@@ -18,7 +18,7 @@ class commandoptions{
         usage = this.description,
         requiredPermissions = null
     ){
-        this.category = category;
+        this.category = category
         this.description = description;
         this.aliases = aliases;
         this.guildOnly = guildOnly;
