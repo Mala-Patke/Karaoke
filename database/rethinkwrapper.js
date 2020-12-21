@@ -1,3 +1,4 @@
+const { Collection } = require('discord.js');
 const rethink = require('rethinkdb');
 require('dotenv').config();
 
@@ -107,6 +108,15 @@ class RethinkWrapper{
                 });
             });
         });
+    }
+    
+    /**
+     * @param {import('rethinkdb').Connection} connection 
+     * @param {string} guildId 
+     * @returns {object[]} User ID mapped to score.
+     */
+    static async getMembersFromGuild(connection, guildId){
+        return await rethink.table(guildId).coerceTo('array').run(connection);
     }
 }
 

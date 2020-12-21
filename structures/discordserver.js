@@ -34,6 +34,10 @@ module.exports = class Server{
         rethink.incrementMemberCount(this.client.connection, userid, this.id);
     }
 
+    async getGuildMemberCounts(guildid){
+        
+    }
+
     /**
      * @param {string} userid 
      * @returns {number}
