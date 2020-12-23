@@ -20,7 +20,7 @@ class MiniCache extends Collection{
         //Set Value
         } 
         
-        this.set(key, { val: val, time:time})
+        this.set(key, {val: val, time:time})
 
         //Declare Listener
         this._ee.on(key, (key) => {

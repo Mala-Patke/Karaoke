@@ -61,9 +61,10 @@ class SQLWrapper{
      * @param {string} value 
      */
     static add(id, key, value){
-        value = value.replace(/[,-*_.#@$%\/\\]/g, '').toLowerCase();
+        value = value.replace(/[,*_.#@$%\/\\\-]/g, '').toLowerCase();
+        //SQLite doesn't use CONCAT. Fix on migration
         db.prepare(`UPDATE guilds
-        SET ${key} = CONCAT((SELECT ${key} FROM guilds WHERE id = '${id}'), ',${value}')
+        SET ${key} = (SELECT ${key} FROM guilds WHERE id = '${id}') || ',${value}'
         WHERE id = '${id}'
         `).run();
     }

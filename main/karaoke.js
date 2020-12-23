@@ -27,13 +27,7 @@ function karaoke(client, message){
     }
 
     let lyricsline = server.song.split('\n')[server.line];
-    let localline = parseLyrics(message.content);
-
-    //check for banned words
-    for(let i in server.bannedwords){
-        lyricsline.replace(i, '*'.repeat(i.length));
-        lyricsline.replace(i, '*'.repeat(i.length));
-    }
+    let localline = parseLyrics(message.content, server.bannedwords);
 
     //Handle Incorrect Line
     if(lyricsline !== localline){

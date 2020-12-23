@@ -3,3 +3,4 @@ push.js*
 *.env
 *.sqlite
 *RethinkDB
+*.txt

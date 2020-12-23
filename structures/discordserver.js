@@ -1,5 +1,5 @@
 const KaraokeBot = require('./karaokebot');
-const cache = require('./minicache');
+const Cache = require('./minicache');
 const rethink = require('../database/rethinkwrapper');
 
 module.exports = class Server{
@@ -12,16 +12,18 @@ module.exports = class Server{
         this.id = id;
     }
     
-    cache = new cache();
+    cache = new Cache();
 
     /**
-     * @param {string} thing 
+     * @param {string} thing
+     * @param {boolean} cache 
      * @private
+     * @return {string}
      */
-    _get(thing){
+    _get(thing, cache = true){
         if(!this.cache.get(thing)){
             let dbresponse = this.client.guildata.get(this.id, thing);
-            this.cache.tset(thing, dbresponse, 600000);
+            if(cache) this.cache.tset(thing, dbresponse, 600000);
             return dbresponse;
         } 
         return this.cache.get(thing).val;
@@ -32,10 +34,6 @@ module.exports = class Server{
      */
     incrementMemberCount(userid){
         rethink.incrementMemberCount(this.client.connection, userid, this.id);
-    }
-
-    async getGuildMemberCounts(guildid){
-        
     }
 
     /**
@@ -61,6 +59,27 @@ module.exports = class Server{
     set(key, val){
         this.client.guildata.set(this.id, key, val);
         this.cache.tset(key, val, 600000);
+    }
+
+    /**
+     * @param {('prefix'|'karaokeChannelID'|'roleRewardID'|'lastSingerID'|'currentSong'|'currentSongName'|'currentLine'|'bannedWords'|'songStartTime')} key 
+     * @param {string} val 
+     */
+    add(key, val){
+        if(!this._get(key, false)) return this.client.guildata.set(key, val);
+        this.client.guildata.add(this.id, key, val);
+    }
+
+    /**
+     * @param {('prefix'|'karaokeChannelID'|'roleRewardID'|'lastSingerID'|'currentSong'|'currentSongName'|'currentLine'|'bannedWords'|'songStartTime')} key 
+     * @param {string} val 
+     */
+    remove(key, val){
+        const curr = this._get(key, false);
+        if(!curr) throw new Error('No value set')
+        if(!curr.split(',').includes(val)) throw new Error('Invalid value');
+        console.log(curr.replace(val, ''))
+        this.client.guildata.set(this.id, key, curr.replace(val, '').replace(/,{2,}/g, ''));
     }
 
     /**
@@ -121,7 +140,7 @@ module.exports = class Server{
      */
     get bannedwords(){
         try{
-            return this._get('bannedWords').split(",");
+            return this._get('bannedWords', false).split(",");
         } catch {
             return [];
         }

@@ -1,10 +1,6 @@
 const Command = require('../../structures/command');
 
 module.exports = class SetupCommand extends Command{
-    /**
-     * 
-     * @param {import('../../structures/karaokebot')} client 
-     */
     constructor(client){
         super('setup', client, {
             category: __dirname,
@@ -19,23 +15,24 @@ module.exports = class SetupCommand extends Command{
      * @param {import('discord.js').Message} message 
      */
     execute(message){
-        const filter = m => m.author === message.author;
-        const collector = message.channel.createMessageCollector(filter, {time:300000});
+        const collector = message.channel.createMessageCollector(m => m.author === message.author, {time:300000});
         let increment = 1;
+        const options = {
+            2: () => message.channel.send(this.setupembeds.second()),
+            3: () => message.channel.send(this.setupembeds.third()),
+            4: () => collector.stop('completed')
+        }
+
         message.channel.send(this.setupembeds.first());
+
         collector.on('collect', () => {
-            if(message.channel.lastMessage.content.toLocaleLowerCase() === 'cancel') return collector.stop('Cancelled');
+            if(message.channel.lastMessage.content.toLocaleLowerCase() === 'cancel') return collector.stop('Cancelled by user');
             increment++;
-            const options = {
-                2: () => message.channel.send(this.setupembeds.second()),
-                3: () => message.channel.send(this.setupembeds.third()),
-                4: () => collector.stop('completed')
-            }
             options[increment]();
         })
 
         collector.on('end', (collected, reason) => {
-            if(reason !== 'completed') return message.channel.send("Prompt cancelled");
+            if(reason !== 'completed') return message.channel.send(`Prompt cancelled: ${reason}`);
             let messages = collected.array().slice(1);
 
             const server = this.client.getServerByID(message.guild.id);

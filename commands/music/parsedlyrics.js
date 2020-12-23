@@ -33,7 +33,7 @@ module.exports = class ParsedLyricsCommand extends Command{
             .catch(err => message.channel.send(`Reaction menu closed: ${err}`));
 
         let temp = await message.channel.send(`Fetching lyrics...`);
-        let actualsonglyrics = await genius.lyrics(searchresults.hits[selection].result.url).catch(err => { throw new Error(err)});
+        let actualsonglyrics = await genius.lyrics(searchresults.hits[selection].result.url).catch(err => { throw new Error(err) });
 
         await temp.delete();
         message.channel.send(`\`\`\`${parseLyrics(actualsonglyrics, this.client.getServerByID(message.guild.id).bannedwords)}\`\`\``, {split:{append:'```', prepend:'```'}});
