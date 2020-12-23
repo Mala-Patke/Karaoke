@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const parseLyrics = require('./parseLyrics');
+const parseLyrics = require('./parseLyrics').default;
 
 /**
  * I have no idea what I'm doing send help
@@ -27,7 +27,27 @@ function karaoke(client, message){
     }
 
     let lyricsline = server.song.split('\n')[server.line];
-    let localline = parseLyrics(message.content, server.bannedwords);
+
+    /**
+     * I can't do this
+     * What I should be doing is
+     * > Checking for blatant bannedword instances
+     * > Replacing placeholders using le funny regex
+     */
+    if(localline.match(new RegExp(bannedWords.map(elem => `(${elem}\\w*)`).join('|'), 'g')).length){
+        message.delete()
+            .then(() => {
+                message.author.send(
+                    new MessageEmbed()
+                        .setTitle('Error: Line contains a banned word.')
+                        .setDescription(`Your line contained a banned word. Banned words may not be used in song lyrics. In the future, you can censor out banned words with use of the * or # characters`)
+                        .addField('What are this servers banned words?', `Use the ${server.prefix}bannedwords command to find out!`)
+                        .setFooter('If you think this was a mistake, tell a server administrator')
+                        .setColor('RED')
+                )            
+            })
+    }
+    let localline = parseLyrics(message.content, server.bannedwords, true);
 
     //Handle Incorrect Line
     if(lyricsline !== localline){

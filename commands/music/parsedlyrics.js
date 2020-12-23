@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const Command = require("../../structures/command");
 const genius = require("../../geniusapiwrapper/genius");
-const parseLyrics = require('../../main/parseLyrics');
+const parseLyrics = require('../../main/parseLyrics').default;
 
 module.exports = class ParsedLyricsCommand extends Command{
     constructor(client){
@@ -9,7 +9,7 @@ module.exports = class ParsedLyricsCommand extends Command{
             category:__dirname,
             description: 'Get\'s the parsed lyrics of the song, as they\'re interpretted by the karaoke feature.',
             aliases: [],
-            usage: 'parsedlyrics [song name]' 
+            usage: 'parsedlyrics <song name>' 
         })
     }
 

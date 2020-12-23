@@ -1,7 +1,7 @@
 const Command = require('../../structures/command');
 const { MessageEmbed } = require('discord.js');
 const genius = require('../../geniusapiwrapper/genius');
-const parseLyrics = require('../../main/parseLyrics');
+const parseLyrics = require('../../main/parseLyrics').default;
 
 class SetSongCommand extends Command{
     constructor(client){
@@ -45,7 +45,7 @@ class SetSongCommand extends Command{
 
         await temp.delete();
 
-        server.set('currentSong', parseLyrics(actualsonglyrics));
+        server.set('currentSong', parseLyrics(actualsonglyrics, server.bannedwords));
         server.set('currentSongName', searchresults.hits[selection].result.full_title)
         server.set('songStartTime', Date.now());
         server.set('currentLine', 0);

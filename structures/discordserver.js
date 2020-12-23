@@ -66,7 +66,7 @@ module.exports = class Server{
      * @param {string} val 
      */
     add(key, val){
-        if(!this._get(key, false)) return this.client.guildata.set(key, val);
+        if(!this._get(key, false)) return this.client.guildata.set(this.id, key, val);
         this.client.guildata.add(this.id, key, val);
     }
 
