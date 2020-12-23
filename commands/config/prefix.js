@@ -8,7 +8,6 @@ class PrefixCommand extends Command{
                 aliases: [],
                 guildOnly: true, 
                 usage: 'prefix [prefix]'
-            
         })
     }
 
@@ -18,7 +17,7 @@ class PrefixCommand extends Command{
     */
     async execute(message, args){
         const server = this.client.getServerByID(message.guild.id);
-        if(!args.length) return message.channel.send(``, {
+        if(!args.length || !message.member.hasPermission('MANAGE_GUILD')) return message.channel.send(``, {
             embed:{
                 description:`Prefix for server '${message.guild.name}:' \`${server.prefix}\``,
                 footer:`To change this prefix, run ${server.prefix}prefix [new prefix]`

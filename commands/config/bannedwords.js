@@ -35,7 +35,6 @@ const comcase = {
     * @param {string[]} args
     */
     'list': (server) => {
-        console.log(server.bannedwords);
         return new MessageEmbed()
             .setTitle("Here's a list of banned words on this server!")
             .setDescription('> ' + server.bannedwords.join('\n> '));
@@ -59,8 +58,9 @@ class BannedWordsCommand extends Command{
     */
     async execute(message, args){
         let subcom = args.shift();
+        if(!subcom || !message.member.hasPermission('MANAGE_GUILD')) subcom = 'list';
         const server = this.client.getServerByID(message.guild.id);
-        message.channel.send(comcase[subcom || 'list'](server, args));
+        message.channel.send(comcase[subcom](server, args));
     }
 }
 
