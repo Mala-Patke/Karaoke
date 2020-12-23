@@ -8,8 +8,32 @@ module.exports = class PingCommand extends Command{
         })
     }
 
-    execute(message, args){
-        return message.channel.send(message.client.ws.ping);
+    /**
+     * @param {import('discord.js').Message} message 
+     */
+    execute(message){
+        let now = Date.now();
+        message.channel.send('pinging...')
+            .then(m => {
+                m.edit(``, {
+                    embed:{
+                        title:`:ping_pong: Pong!`,
+                        fields:[
+                            {
+                                name: 'Latency',
+                                value: `${Date.now()-now}ms`,
+                                inline:true
+                            },
+                            {
+                                name: 'Websocket Ping',
+                                value: `${this.client.ws.ping}ms`,
+                                inline:true
+                            }
+                        ]
+                    }
+                })
+            })
+        
     }
 
 }
