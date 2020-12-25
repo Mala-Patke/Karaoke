@@ -1,7 +1,7 @@
 const Command = require('../../structures/command');
 const { MessageEmbed } = require('discord.js');
 const genius = require('../../geniusapiwrapper/genius');
-const parseLyrics = require('../../main/parseLyrics').default;
+const parseLyrics = require('../../main/parseLyrics');
 
 class SetSongCommand extends Command{
     constructor(client){

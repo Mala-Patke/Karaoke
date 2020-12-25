@@ -14,7 +14,7 @@ client.on('message', message => {
 
     const server = client.getServerByID(message.guild.id);
 
-    if(message.channel.id === server.karaokeChannel) karaoke(client, message);
+    if(message.channel.id === server.karaokeChannel) return karaoke(client, message);
 
     let prefix = server.prefix;
     if(!message.content.startsWith(prefix.toLowerCase())) return;

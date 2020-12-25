@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const parseLyrics = require('./parseLyrics').default;
+const parseLyrics = require('./parseLyrics');
 
 /**
  * I have no idea what I'm doing send help
@@ -27,15 +27,9 @@ function karaoke(client, message){
     }
 
     let lyricsline = server.song.split('\n')[server.line];
-
-    /**
-     * I can't do this
-     * What I should be doing is
-     * > Checking for blatant bannedword instances
-     * > Replacing placeholders using le funny regex
-     */
-    if(localline.match(new RegExp(bannedWords.map(elem => `(${elem}\\w*)`).join('|'), 'g')).length){
-        message.delete()
+    //Handle Banned Words 
+    if(message.content.match(new RegExp(server.bannedwords.map(elem => `(${elem}\\w*)`).join('|'), 'gi'))){
+        return message.delete()
             .then(() => {
                 message.author.send(
                     new MessageEmbed()
@@ -66,8 +60,9 @@ function karaoke(client, message){
     //Increment user and guild counts
     server.incrementMemberCount(message.author.id);
     server.set('lastSingerID', message.author.id);
+    message.guild.roles.cache.get(server.roleReward).members.forEach(async m => await m.roles.remove(server.roleReward))
     message.member.roles.add(server.roleReward);
-    client.guildata.increment(message.guild.id, 'currentLine', 1);
+    server.increment('currentLine', 1);
     
 
     //Handle Song Completion

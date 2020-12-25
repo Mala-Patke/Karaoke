@@ -15,18 +15,18 @@ module.exports = class Server{
     cache = new Cache();
 
     /**
+     * @private
      * @param {string} thing
      * @param {boolean} cache 
-     * @private
      * @return {string}
      */
     _get(thing, cache = true){
-        if(!this.cache.get(thing)){
+        if(!this.cache.has(thing)){
             let dbresponse = this.client.guildata.get(this.id, thing);
             if(cache) this.cache.tset(thing, dbresponse, 600000);
             return dbresponse;
         } 
-        return this.cache.get(thing).val;
+        return this.cache.get(thing);
     }
 
     /**
@@ -59,6 +59,15 @@ module.exports = class Server{
     set(key, val){
         this.client.guildata.set(this.id, key, val);
         this.cache.tset(key, val, 600000);
+    }
+
+    /**
+     * @param {('prefix'|'karaokeChannelID'|'roleRewardID'|'lastSingerID'|'currentSong'|'currentSongName'|'currentLine'|'bannedWords'|'songStartTime')} key 
+     * @param {number} val 
+     */
+    increment(key, num){
+        this.client.guildata.increment(this.id, key, num);
+        this.cache.tset(key, this._get(key, false)+1, 600000);
     }
 
     /**
