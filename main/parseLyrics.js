@@ -12,8 +12,10 @@ function parseLyrics(lyrics, bannedWords = [], user = false){
             .replace(/[-]/g, ' ')
             //Characters that can be completely deleted
             .replace(/['"’,.?¿!¡:#*;\(\)]/g, '')
-            //Fuck you Tally Hall
+            //Tally Hall rule
             .replace('&', 'and')
+            //What the fuck is a \u2005 and why does genius use it?
+            .replace('\u2005', ' ')
             //Remove BannedWords
             .replace(new RegExp(bannedWords.map(elem => `(${elem}\\w*)`).join('|'), 'g'), '{bannedword}')
             //Kill all double+ linebreaks
