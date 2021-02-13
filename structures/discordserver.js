@@ -1,5 +1,4 @@
 const KaraokeBot = require('./karaokebot');
-const Cache = require('./minicache');
 const rethink = require('../database/rethinkwrapper');
 
 module.exports = class Server{
@@ -12,21 +11,13 @@ module.exports = class Server{
         this.id = id;
     }
     
-    cache = new Cache();
-
     /**
      * @private
      * @param {string} thing
-     * @param {boolean} cache 
      * @return {string}
      */
-    _get(thing, cache = true){
-        if(!this.cache.has(thing)){
-            let dbresponse = this.client.guildata.get(this.id, thing);
-            if(cache) this.cache.tset(thing, dbresponse, 600000);
-            return dbresponse;
-        } 
-        return this.cache.get(thing);
+    _get(thing){
+        return this.client.guildata.get(this.id, thing);
     }
 
     /**
@@ -58,7 +49,6 @@ module.exports = class Server{
      */
     set(key, val){
         this.client.guildata.set(this.id, key, val);
-        this.cache.tset(key, val, 600000);
     }
 
     /**
@@ -67,7 +57,6 @@ module.exports = class Server{
      */
     increment(key, num){
         this.client.guildata.increment(this.id, key, num);
-        this.cache.tset(key, this._get(key, false)+1, 600000);
     }
 
     /**
@@ -75,7 +64,7 @@ module.exports = class Server{
      * @param {string} val 
      */
     add(key, val){
-        if(!this._get(key, false)) return this.client.guildata.set(this.id, key, val);
+        if(!this._get(key)) return this.client.guildata.set(this.id, key, val);
         this.client.guildata.add(this.id, key, val);
     }
 
@@ -84,7 +73,7 @@ module.exports = class Server{
      * @param {string} val 
      */
     remove(key, val){
-        const curr = this._get(key, false);
+        const curr = this._get(key);
         if(!curr) throw new Error('No value set')
         if(!curr.split(',').includes(val)) throw new Error('Invalid value');
         console.log(curr.replace(val, ''))

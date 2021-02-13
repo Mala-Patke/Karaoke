@@ -1,11 +1,12 @@
 const { Collection } = require("discord.js");
 
 class MiniCache extends Collection{
-    constructor(){
+    constructor(defaulttime = 0){
         super();
+        this.defaulttime = defaulttime;
     }
 
-    tset(key, val, time){
+    tset(key, val, time = this.defaulttime){
         if(this.has(key)) clearTimeout(super.get(key).time);
         this.set(key, {
             time: setTimeout(this.delete.bind(this, key), time).unref(),
@@ -15,8 +16,14 @@ class MiniCache extends Collection{
 
     get(key){
         let ret = super.get(key);
-        if(ret) return ret.val
+        if(ret) return ret.val;
         return null;
+    }
+
+    getOrSet(key, val, time = this.defaulttime){
+        if(this.has(key)) return this.get(key);
+        this.tset(key, val, time);
+        return val;
     }
 
     delete(key){

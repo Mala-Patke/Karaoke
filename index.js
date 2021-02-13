@@ -12,17 +12,22 @@ client.on('guildCreate', guild => {
 client.on('message', message => {
     if(message.author.bot) return;
 
-    const server = client.getServerByID(message.guild.id);
+    const server = client.previewServer(message.guild.id);
 
-    if(message.channel.id === server.karaokeChannel) return karaoke(client, message);
+    if(message.channel.id === server.karaokeChannel) {
+        client.cacheServer(message.guild.id);
+        return karaoke(client, message);
+    }
 
     let prefix = server.prefix;
     if(!message.content.startsWith(prefix.toLowerCase())) return;
+    client.cacheServer(message.guild.id);
+
     let command = client.getCommand(message.content.split(/ +/)[0].slice(prefix.length));
     if(!command) return;
+
     let args = message.content.split(/ +/).slice(prefix.split(/ +/).length);
 
-    //Command Checks
     if(command.options.guildOnly && message.channel.type === 'dm')
         return message.channel.send(`The command \`${command.name}\` cannot be executed in DMs.`);
     if(command.options.requiredPermissions && !message.member.hasPermission(command.options.requiredPermissions))

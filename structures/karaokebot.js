@@ -1,5 +1,5 @@
 const { Client, Collection } = require('discord.js');
-const { exec } = require('child_process');
+//const { exec } = require('child_process');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 
@@ -8,6 +8,7 @@ const Server = require('./discordserver');
 
 const rethink = require('../database/rethinkwrapper');
 const SQLWrapper = require('../database/dbwrapper');
+const Cache = require('./minicache');
 
 require('dotenv').config();
 
@@ -27,8 +28,8 @@ module.exports = class KaraokeBot extends Client{
     categories = [];
     /**@private*/
     _connection;
-    /**@private*/
-    _declaredServers = [];
+
+    serverCache = new Cache();
 
     guildata = SQLWrapper;
     rethink = rethink;
@@ -39,18 +40,12 @@ module.exports = class KaraokeBot extends Client{
     get connection(){
         return this._connection
     }
-    /**
-     * @returns {import('./discordserver')[]}
-     */
-    get declaredServers(){
-        return this._declaredServers;
-    }
 
     async rethinkConnect(){
-        exec('rethinkdb.exe', {
-            cwd:'./database/RethinkDB'
+/*        exec('rethinkdb.exe', {
+            cwd:'./database/RethinkDB',
         });
-        this._connection = await rethink.connect()
+*/        this._connection = await rethink.connect()
             .catch(err => console.error(err));
     }
 
@@ -63,17 +58,26 @@ module.exports = class KaraokeBot extends Client{
     }
 
     /**
-     * @param {String} id 
+     * @param {string} id 
      * @returns {Server}
      */
     getServerByID(id){
-        return this.declaredServers.find(a => a.id === id);
+        return this.serverCache.getOrSet(id, new Server(this, id, 600000));
     }
 
-    registerServers(){
-        this.guilds.cache.each(guild => {
-            this._declaredServers.push(new Server(this, guild.id));
-        })
+    cacheServer(id){
+        this.serverCache.tset(id, new Server(this, id, 600000));
+    }
+
+    /**
+     * @param {string} id 
+     * @returns {Object}
+     */
+    previewServer(id){
+        return {
+            prefix: this.guildata.get(id, 'prefix'),
+            karaokeChannel: this.guildata.get(id, 'karaokeChannel')
+        }
     }
 
     registerCategories(){
@@ -96,7 +100,7 @@ module.exports = class KaraokeBot extends Client{
     async registerGuild(id){
         this.guildata.insert(id);
         await this.rethink.registerNewGuild(this.connection, id)
-        this.declaredServers.push(new Server(this, id));
+        this.serverCache.tset(id, new Server(this, id), 600000)
     }
 
     //Stuff that should be done before ready event.
@@ -120,8 +124,7 @@ module.exports = class KaraokeBot extends Client{
 
     //Stuff that should be done on ready
     async ready(){
-        this.registerServers();
-        console.log('All Guilds locally registered.');
+
     }
 
 }
