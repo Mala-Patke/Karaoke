@@ -25,10 +25,11 @@ class HelpCommand extends Command{
                 .setTitle('Here\'s a list of all of my commands!')
                 .setFooter(`To get info on a more specific command or category, run ${prefix}help <command/category name>`);
             for(const cat of this.client.categories){
-                embed.addField(cat, this.client.commands.array()
-                    .filter(com => com.options.category === cat)
-                    .map(val => `\`${val.name}\``)
-                    .join(', '), true);
+                if(cat !== 'ownerOnly')
+                    embed.addField(cat, this.client.commands.array()
+                        .filter(com => com.options.category === cat)
+                        .map(val => `\`${val.name}\``)
+                        .join(', '), true);
             }
         } else if(this.client.categories.includes(args[0])){
             let category = this.client.categories.find(a => a === args[0]);

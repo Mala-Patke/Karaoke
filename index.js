@@ -32,6 +32,7 @@ client.on('message', message => {
         return message.channel.send(`The command \`${command.name}\` cannot be executed in DMs.`);
     if(command.options.requiredPermissions && !message.member.hasPermission(command.options.requiredPermissions))
         return message.channel.send(`You need the \`${command.options.requiredPermissions}\` permission to be able to run this command!`);
+    if(command.options.ownerOnly && message.author.id !== '674140360079048714') return;
 
     try{
         command.execute(message, args);

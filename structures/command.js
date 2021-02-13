@@ -16,7 +16,8 @@ class commandoptions{
         aliases = [],
         guildOnly = false, 
         usage = this.description,
-        requiredPermissions = null
+        requiredPermissions = null,
+        ownerOnly = false
     ){
         this.category = category
         this.description = description;
@@ -24,7 +25,7 @@ class commandoptions{
         this.guildOnly = guildOnly;
         this.usage = usage;
         this.requiredPermissions = requiredPermissions;
-        
+        this.ownerOnly = ownerOnly;
     }
 }
 
@@ -40,9 +41,7 @@ module.exports = class Command{
         this.options = options;
     }
     
-    execute(message, args){
-        return message.channel.send('Edit this to change the output of the command!');
-    }
+    execute(message, args){ }
 
     //Embeds
     setupembeds = {
@@ -73,7 +72,6 @@ module.exports = class Command{
 
     errorEmbed(error){
         return new MessageEmbed()
-            
     }
 
     /**
@@ -102,7 +100,6 @@ module.exports = class Command{
                 }).on('end', (a, reason) => {
                     if(reason !== 1) rej('User did not decide'); 
                 });
-                
         })
     }
 }
