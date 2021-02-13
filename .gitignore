@@ -4,3 +4,4 @@ push.js*
 *.sqlite
 *RethinkDB
 *.txt
+.vscode
