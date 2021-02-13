@@ -11,11 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "0.20.0",
+    "axios": "^0.21.1",
     "better-sqlite3": "7.1.1",
+    "cheerio": "1.0.0-rc.3",
     "discord.js": "12.3.1",
     "dotenv": "^8.2.0",
-    "rethinkdb": "^2.4.2",
-    "cheerio": "1.0.0-rc.3"
+    "rethinkdb": "^2.4.2"
   }
 }
