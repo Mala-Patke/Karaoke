@@ -1,36 +1,30 @@
 const axios = require('axios').default;
 const cheerio = require('cheerio');
 
-//TODO: FindLowestTextElement function
+function parseTextFromChildren(children){
+    let ret = '';
+    for(let child of children){
+        
+        if(child.type == 'text') ret += child.data;
+        if(child.type == 'tag' && child.name === 'br') ret += '\n';
+        if(child.type == 'tag' && child.children.length){
+            //console.log(child.children)
+            ret += parseTextFromChildren(child.children)
+        } //console.log(child.name)
+    }
+    return ret;
+}
 
 module.exports = async (url) => {
     let { data } = await axios.get(url);
     const $ = cheerio.load(data);
     let page = $('div[class*="Lyrics__Container"]')
-
-    console.log(page[0].children[23].children[0].children[0])
+    console.log(page.length);
 
     let ret = '';
     page.each((index, i) => {
-        for(let j of i.children){
-            if(j.type === 'text') ret += j.data
-            if(j.type === 'tag' && j.name === 'a')
-                ret += j.children[0].children
-                    .filter(e => (e.data && e.data.length) || (e.children && e.children.length))
-                    .reduce((prev, e) => {
-                        let mapret = '';
-                        //if(prev && prev.trim().endsWith(e.data)) return;
-                        if(e.data) mapret += e.data
-                        else if(e.next && e.next.children && e.next.children.length && e.next.children[0].data) {
-                            //console.log(mapret)
-                            console.log('1' + e.next.children[0].data)
-                        } 
-                            //mapret += e.next.children[0].data + e.next.next.data;
-                        return `${prev}\n${mapret}`
-                    }, '')
-                    //.join('\n')
-            else if(j.type === 'tag' && j.name === 'br') ret += '\n'
-        }
+        //console.log(index)
+        ret += parseTextFromChildren(i.children)
     })
     return ret;
 }
