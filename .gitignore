@@ -6,3 +6,4 @@ push.js*
 *.txt
 .vscode
 test_*
+*rethinkdb_data
