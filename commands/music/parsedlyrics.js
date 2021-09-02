@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const Command = require("../../structures/command");
 const genius = require("../../geniusapiwrapper/genius");
-const parseLyrics = require('../../main/parseLyrics').default;
+const parseLyrics = require('../../main/parseLyrics');
 
 module.exports = class ParsedLyricsCommand extends Command{
     constructor(client){

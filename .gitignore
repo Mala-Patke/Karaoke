@@ -5,3 +5,4 @@ push.js*
 *RethinkDB
 *.txt
 .vscode
+test_*

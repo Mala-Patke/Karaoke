@@ -17,7 +17,7 @@ function parseLyrics(lyrics, bannedWords = [], user = false){
             //What the fuck is a \u2005 and why does genius use it?
             .replace('\u2005', ' ')
             //Remove BannedWords
-            .replace(new RegExp(bannedWords.map(elem => `(${elem}\\w*)`).join('|'), 'g'), '{bannedword}')
+            .replace(new RegExp(bannedWords.map(elem => `(${elem}\\w*)`).join('|'), 'g'), '{}')
             //Kill all double+ linebreaks
             .split(/\n+/g)
             //Remove everything inside of brackets
@@ -30,7 +30,7 @@ function parseLyrics(lyrics, bannedWords = [], user = false){
         .replace(/[-]/g, ' ')
         .replace(/['"’,.?¿!¡:;\(\)]/g, '')
         .replace('&', 'and')
-        .replace(/[^\s]*[*#][^\s]*/g, '{bannedword}')
+        .replace(/[^\s]*[*#][^\s]*/g, '{}')
         .split(/\n+/g)
         .filter(elem => !elem.startsWith('['))
         .join('\n')

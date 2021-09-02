@@ -62,11 +62,11 @@ module.exports = class KaraokeBot extends Client{
      * @returns {Server}
      */
     getServerByID(id){
-        return this.serverCache.getOrSet(id, new Server(this, id, 600000));
+        return this.serverCache.getOrSet(id, new Server(this, id), 600000);
     }
 
     cacheServer(id){
-        this.serverCache.tset(id, new Server(this, id, 600000));
+        this.serverCache.tset(id, new Server(this, id), 600000);
     }
 
     /**
@@ -76,7 +76,7 @@ module.exports = class KaraokeBot extends Client{
     previewServer(id){
         return {
             prefix: this.guildata.get(id, 'prefix'),
-            karaokeChannel: this.guildata.get(id, 'karaokeChannel')
+            karaokeChannel: this.guildata.get(id, 'karaokeChannelID')
         }
     }
 
