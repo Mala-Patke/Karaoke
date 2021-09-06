@@ -17,6 +17,8 @@ module.exports = class LyricsCommand extends Command{
      * @param {String[]} args 
      */
     async execute(message, args){
+        if(!args.length) return message.channel.send('Error: No song provided');
+
         let searchresults = await genius.search(args.join(" ")).catch(err => console.log(1));
         let embeddescription = '';
         for(let i = 0; i < 5; i++){
