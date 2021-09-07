@@ -14,8 +14,6 @@ function parseLyrics(lyrics, bannedWords = [], user = false){
             .replace(/['"’,.?¿!¡:#*;\(\)]/g, '')
             //Tally Hall rule
             .replace('&', 'and')
-            //What the fuck is a \u2005 and why does genius use it?
-            .replace('\u2005', ' ')
             //Remove BannedWords
             .replace(new RegExp(bannedWords.map(elem => `(${elem}\\w*)`).join('|'), 'g'), '{}')
             //Kill all double+ linebreaks
@@ -24,7 +22,9 @@ function parseLyrics(lyrics, bannedWords = [], user = false){
             .filter(elem => !elem.startsWith('['))
             .join('\n')
             //Replace any double spaces previous methods may have caused
-            .replace(/ +/g, ' ');
+            .replace(/ +/g, ' ')
+            //Remove funny space characters that exist for no good reason
+            .replace(/\u2005/g, ' ')
     else return lyrics //Not going to recomment every line
         .toLowerCase()
         .replace(/[-]/g, ' ')

@@ -19,7 +19,7 @@ function karaoke(client, message){
     }
 
     //Check if user has rolereward
-    /*
+    /* Remove comment when testing done
     if(server.lastSinger && message.author.id === server.lastSinger){
         return message.delete()
             .then(() => {
@@ -47,10 +47,7 @@ function karaoke(client, message){
 
 //    if(lyricsline.search(new RegExp(descape.map(elem => `(${elem}\\w*)`).join('|'), 'gi'))) lyricsline = parseLyrics(lyricsline, descape)
 
-    let cbw = server.bannedwords;
-//    cbw.push(descape);
-//    cbw = [...new Set(cbw)];
-    let localline = parseLyrics(message.content, cbw, true);
+    let localline = parseLyrics(message.content, server.bannedwords, true);
 
     //Handle Incorrect Line
     if(lyricsline !== localline){
@@ -69,16 +66,18 @@ function karaoke(client, message){
     //Increment user and guild counts
     server.incrementMemberCount(message.author.id);
     try {
-        message.guild.members.cache.get(server.lastSinger).roles.remove(server.roleReward)
+        message.guild.members.cache.get(server.lastSinger).roles.remove(server.roleReward);
     } catch { }
     server.set('lastSingerID', message.author.id);
-    message.member.roles.add(server.roleReward);
+    if(server.roleReward) message.member.roles.add(server.roleReward);
     server.increment('currentLine', 1);
     
 
     //Handle Song Completion
     if(server.song.split('\n').length <= server.line){
         let finishtime = new Date(Date.now() - server.startTime);
+        let finishedsong = server.songName;
+
         //Kill all of the database instances
         server.set('currentSong', null);
         server.set('currentSongName', null);
@@ -86,11 +85,16 @@ function karaoke(client, message){
         server.set('currentLine', 0);
         server.set('songStartTime', 0);
 
+        //Remove channel header
+        if(message.guild.members.cache.get(client.user.id).hasPermission('MANAGE_CHANNELS')) {
+            message.channel.setTopic('No Current Song');
+        }
+
         //Announce song has been complete
         message.guild.channels.cache.get(server.karaokeChannel).send(
             new MessageEmbed()
                 .setTitle('Congrats! You\'ve completed the song!')
-                .setDescription(`The song ${server.songName} has been completed in ${finishtime.getHours()} hours, ${finishtime.getMinutes()} minutes, and ${finishtime.getSeconds()}`)
+                .setDescription(`The song **${finishedsong}** has been completed in ${finishtime.getHours()} hours, ${finishtime.getMinutes()} minutes, and ${finishtime.getSeconds()} seconds`)
                 .setFooter(`You can set a new song with the ${server.prefix}setsong command.`)
                 .setColor('GREEN')
         );
